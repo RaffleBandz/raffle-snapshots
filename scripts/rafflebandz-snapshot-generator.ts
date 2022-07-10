@@ -6,7 +6,7 @@ import { hideBin } from 'yargs/helpers';
 import {
   processAssetHistory,
   processCsv,
-} from './shapshot-utils';
+} from './snapshot-utils';
 
 const cliArgs = yargs(hideBin(process.argv))
   .option('verbose', {
