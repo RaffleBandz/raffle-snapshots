@@ -1,0 +1,52 @@
+{
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "esnext",
+    "module": "esnext",
+    "types": [
+      "node",
+    ],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "./.build",
+    "useUnknownInCatchVariables": false,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "typeRoots": [
+      "node_modules/@types",
+      "@types"
+    ],
+    "paths": {}
+  },
+  "include": [
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__mocks__/*",
+    "**/__tests__/*",
+    "**/*.map"
+  ]
+}
