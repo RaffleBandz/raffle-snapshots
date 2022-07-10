@@ -13,8 +13,8 @@ RaffleBandz raffles are completed via the following steps:
 To generate a raffle owners snapshot, run the following command:
 
 ```sh
-> pushd /path/to/raffle-bandz/raffle-snapshots
-> ts-node ./scripts/rafflebandz-snapshot-generator.js -v --assetId=798434015
+> pushd /path/to/raffle-bandz/raffle-utilities
+> ts-node ./scripts/snapshots/rafflebandz-snapshot-generator.js -v --assetId=798434015
 
 or 
 
@@ -22,5 +22,5 @@ or
 ```
 
 ### Snapshot History
-See the "snapshots" folder for historical snapshot results. Each snapshot is stored in a dated directory.
+See the "archive/snapshots" folder for historical snapshot results. Each snapshot is stored in a dated directory.
 * Raffle 1 - 2022-07-10 - RB001 - Asset ID: 798434015

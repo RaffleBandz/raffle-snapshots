@@ -30,7 +30,7 @@ const fisherYatesShuffle = <T = any>(array: T[], rng: any = Math) => {
  * @returns The full path to the file that was written
  */
 const writeCsvData = (filename: string, csvData: (string | number)[][]) => {
-  const snapshotDir = path.resolve(__dirname, '..', 'snapshots', format(new Date(), 'yyyy-MM-dd'));
+  const snapshotDir = path.resolve(__dirname, '..', 'archive', 'snapshots', format(new Date(), 'yyyy-MM-dd'));
   fs.mkdirSync(snapshotDir, { recursive: true });
 
   const localFilepath = path.join(snapshotDir, filename);

@@ -1,22 +1,22 @@
 {
-  "name": "raffle-snapshots",
+  "name": "rafflebandz-utilities",
   "version": "1.0.0",
-  "description": "Snapshot generator for RaffleBandz raffles",
+  "description": "RaffleBandz utility library",
   "main": "index.js",
   "scripts": {
-    "snapshot": "ts-node ./scripts/rafflebandz-snapshot-generator.ts",
+    "snapshot": "ts-node ./scripts/snapshots/rafflebandz-snapshot-generator.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RaffleBandz/raffle-snapshots.git"
+    "url": "git+https://github.com/RaffleBandz/raffle-utilities.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/RaffleBandz/raffle-snapshots/issues"
+    "url": "https://github.com/RaffleBandz/raffle-utilities/issues"
   },
-  "homepage": "https://github.com/RaffleBandz/raffle-snapshots#readme",
+  "homepage": "https://github.com/RaffleBandz/raffle-utilities#readme",
   "dependencies": {
     "date-fns": "^2.28.0",
     "node-fetch": "^3.2.4",
