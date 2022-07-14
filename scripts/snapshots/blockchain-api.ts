@@ -6,6 +6,23 @@ type AxferTx = {
   sender: string;
 };
 
+export type AssetInfo = {
+  assetId: number;
+  createdRound: number;
+  deleted: boolean | null; // true or false
+  clawback: string | null;
+  freeze: string | null;
+  creator: string | null;
+  manager: string | null;
+  reserve: string | null;
+  name: string | null;
+  unitName: string | null;
+  decimals: number;
+  supply: number;
+  url: string | null;
+  accounts: string[];
+};
+
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 
 // We have to do this because the node-fetch maintainers jumped the gun
@@ -32,7 +49,7 @@ const safeParseNum = (num?: string | number | null) => {
 };
 
 export const getAssetInfo = async (assetId: number) => {
-  const assetInfo = {
+  const assetInfo: AssetInfo = {
     assetId,
     createdRound: 0,
     deleted: null, // true or false
@@ -84,6 +101,66 @@ export const getAssetInfo = async (assetId: number) => {
   console.log('Returning asset info:', rest);
   console.log();
   return assetInfo;
+};
+
+const isValidAxferTxn = (tx: any, assetId: number) => (
+  tx['tx-type'] === 'axfer' && (
+    (tx['asset-transfer-transaction'].amount > 0 || tx['asset-transfer-transaction']['close-amount'] > 0)
+    && tx['asset-transfer-transaction']['asset-id'] === assetId
+  )
+);
+
+const appCallIsAxfer = (tx: any, assetId: number) => {
+  const innerTxns = tx['inner-txns'];
+  return Array.isArray(innerTxns) && innerTxns.find((tx) => isValidAxferTxn(tx, assetId));
+};
+
+const getAxferTxnReceiver = (tx: any) => {
+  const receiver = tx['asset-transfer-transaction'].receiver;
+  if (receiver === ZERO_ADDRESS && tx['asset-transfer-transaction']['close-to'] !== ZERO_ADDRESS) {
+    return tx['asset-transfer-transaction']['close-to'];
+  }
+  return receiver;
+};
+
+const getAxferTxnAmount = (tx: any) => (
+  tx['asset-transfer-transaction'].amount || tx['asset-transfer-transaction']['close-amount']
+);
+
+const getAxferSender = (tx: any) => tx.sender;
+
+
+const getTxnReceiver = (tx: any, assetId: number) => {
+  if (appCallIsAxfer(tx, assetId)) {
+    const innerTxns = tx['inner-txns'];
+    // TODO: there may be many of these, what would that look like?
+    const axferTxn = innerTxns.find((tx: any) => isValidAxferTxn(tx, assetId));
+    return axferTxn ? getAxferTxnReceiver(axferTxn) : 'unknown';
+  }
+
+  return getAxferTxnReceiver(tx);
+};
+
+const getTxnAmount = (tx: any, assetId: number) => {
+  if (appCallIsAxfer(tx, assetId)) {
+    const innerTxns = tx['inner-txns'];
+    // TODO: there may be many of these, what would that look like?
+    const axferTxn = innerTxns.find((tx: any) => isValidAxferTxn(tx, assetId));
+    return axferTxn ? getAxferTxnAmount(axferTxn) : 0;
+  }
+
+  return getAxferTxnAmount(tx);
+};
+
+const getTxnSender = (tx: any, assetId: number) => {
+  if (appCallIsAxfer(tx, assetId)) {
+    const innerTxns = tx['inner-txns'];
+    // TODO: there may be many of these, what would that look like?
+    const axferTxn = innerTxns.find((tx: any) => isValidAxferTxn(tx, assetId));
+    return axferTxn ? getAxferSender(axferTxn) : 'unknown';
+  }
+
+  return getAxferSender(tx);
 };
 
 /**
@@ -162,18 +239,15 @@ export const getAssetTransactions = async (assetId: number, minRound: number) =>
 
         if (Array.isArray(data.transactions)) {
           const processed = data.transactions
-            .filter((tx) => (
-              tx['tx-type'] === 'axfer'
-              && (tx['asset-transfer-transaction'].amount > 0 || tx['asset-transfer-transaction']['close-amount'] > 0)
-            ))
+            .filter((tx) => isValidAxferTxn(tx, assetId) || appCallIsAxfer(tx, assetId))
             .map((tx) => ({
               // Note that we are smashing the meaning of the transactions here - there are several ways to send assets,
               // and several ways to opt out, and we ignore all of them in favor of ONLY seeing where the assets
               // are going. We don't know, at the end of this, who is opted in and who opted out and who sent 100% of their
               // balance but is still opted in - we only know their final balances.
-              sender: tx.sender,
-              receiver: tx['asset-transfer-transaction'].receiver,
-              amount: tx['asset-transfer-transaction'].amount || tx['asset-transfer-transaction']['close-amount'],
+              sender: getTxnSender(tx, assetId),
+              receiver: getTxnReceiver(tx, assetId),
+              amount: getTxnAmount(tx, assetId),
             }));
 
           console.log(`${processed.length} transactions added`);
