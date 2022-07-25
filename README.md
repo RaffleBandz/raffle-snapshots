@@ -9,6 +9,13 @@ RaffleBandz raffles are completed via the following steps:
 * Snapshots are taken via this tool and the data provided in our Discord server in the #raffles channel
 * A random number generator discord bot is used to select a slot from the total # of slots
 
+
+### Raffle History
+- RB001: 2022-07-15, 6pm EST USA
+- RB002: 2022-07-15, 6pm EST USA
+- RB003: 2022-07-25, 6pm EST USA
+
+
 #### Snapshot generation
 To generate a raffle owners snapshot, run the following command:
 
